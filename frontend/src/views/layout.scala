@@ -3,7 +3,9 @@ package muajam.frontend.views
 import org.scalajs.dom
 import scalatags.JsDom.TypedTag
 import scalatags.JsDom.all.*
+import muajam.frontend.App
 import muajam.frontend.Route
+import muajam.frontend.utils.HarakatPrefs
 
 private def navLink(
     label: String,
@@ -18,7 +20,22 @@ private def navLink(
 def layout: TypedTag[dom.HTMLDivElement] =
   div(cls := "page")(
     div(id := "site-header")(renderHeader(Route.current)),
-    div(id := "content")
+    div(id := "content"),
+    harakatToggle()
+  )
+
+private def harakatToggle(): TypedTag[dom.HTMLLabelElement] =
+  label(cls := "harakat-toggle")(
+    input(
+      `type` := "checkbox",
+      if (HarakatPrefs.withoutHarakat) checked := true else (),
+      onchange := { (event: dom.Event) =>
+        val input = event.target.asInstanceOf[dom.HTMLInputElement]
+        HarakatPrefs.setWithoutHarakat(input.checked)
+        App.rerender()
+      }
+    ),
+    span("Без огласовок")
   )
 
 def renderHeader(page: Route.ClientRoute): TypedTag[dom.HTMLDivElement] = {

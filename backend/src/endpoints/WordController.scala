@@ -9,7 +9,7 @@ import scalasql.dialects.PostgresDialect.*
 import scalasql.*
 import zio.*
 import zio.json.*
-import muajam.backend.endpoints.ModuleController.wordResponse
+import muajam.backend.Util.Responses.wordResponse
 
 object WordController {
 
@@ -17,8 +17,11 @@ object WordController {
     Handler.fromFunctionZIO[Request] { _ =>
       withDb {
         for {
-          wordsRows <- run(Word.select.sortBy(w => w.translation))
-        } yield Response.json(wordsRows.map(wordResponse(_)).toJson)
+          words <- run(Word.select.sortBy(w => w.translation))
+          response = words
+            .map(wordResponse(_))
+            .distinctBy(w => (w.withoutHarakat, w.translation))
+        } yield Response.json(response.toJson)
       }
     }
 

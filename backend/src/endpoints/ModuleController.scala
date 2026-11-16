@@ -8,55 +8,23 @@ import scalasql.*
 import scalasql.dbzio.ZDbClient
 import muajam.backend.db.*
 import scalasql.dialects.PostgresDialect.*
-import scala.util.Random
 import muajam.shared.*
 import scalasql.dbzio.DbException
+import muajam.backend.Util.*
 import muajam.backend.Util
 
 object ModuleController {
-
-  private val modulesRoute: RoutePattern[Unit] =
-    Method.GET / Util.pathCodec(ApiRoutes.modules)
-
-  private val moduleByIdRoute: RoutePattern[Int] =
-    Method.GET / Util.pathCodec(ApiRoutes.modules) / int("id")
-
-  def wordResponse(word: Word[Sc]): WordResponse =
-    WordResponse(
-      id = word.id,
-      arabic = word.arabic,
-      translation = word.translation,
-      plural = word.plural,
-      moduleId = word.moduleId,
-      createdAt = word.createdAt.toString
-    )
-
-  private def moduleResponse(
-      module: Module[Sc],
-      words: Seq[Word[Sc]],
-      previewOnly: Boolean
-  ): ModuleResponse = {
-    val selectedWords =
-      if (previewOnly) Random.shuffle(words).take(math.min(5, words.length))
-      else words
-
-    ModuleResponse(
-      id = module.id,
-      name = module.name,
-      createdAt = module.createdAt.toString,
-      wordsCount = words.length,
-      words = selectedWords.map(wordResponse).toList
-    )
-  }
 
   private val modules: Handler[ZDbClient, DbException, Request, Response] =
     Handler.fromFunctionZIO[Request] { _ =>
       withDb {
         for {
-          moduleRows <- run(Module.select)
+          moduleRows <- run(Module.select.sortBy(m => m.id).desc)
           modulesWithWords <- ZIO.foreach(moduleRows) { module =>
             run(Word.select.filter(_.moduleId `=` module.id))
-              .map(words => moduleResponse(module, words, previewOnly = true))
+              .map(words =>
+                Responses.moduleResponse(module, words, previewOnly = true)
+              )
           }
         } yield Response.json(modulesWithWords.toJson)
       }
@@ -82,7 +50,9 @@ object ModuleController {
               )
                 .map(words =>
                   Response.json(
-                    moduleResponse(module, words, previewOnly = false).toJson
+                    Responses
+                      .moduleResponse(module, words, previewOnly = false)
+                      .toJson
                   )
                 )
           }

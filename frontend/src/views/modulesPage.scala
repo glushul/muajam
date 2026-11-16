@@ -46,7 +46,7 @@ private def moduleCard(module: ModuleResponse): TypedTag[dom.html.Div] = {
     } else {
       val items = module.words.map { word =>
         li(
-          span(cls := "word-arabic")(word.arabic),
+          span(cls := "word-arabic")(HarakatPrefs.of(word)),
           span(cls := "word-translation")(word.translation)
         )
       }

@@ -51,7 +51,8 @@ a {
 .page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 24px 16px 64px;
+  /* нижний отступ — чтобы плавающий переключатель не перекрывал контент */
+  padding: 24px 16px 96px;
 }
 
 /* ---------- Hero ---------- */
@@ -105,7 +106,7 @@ a {
 .nav-link.active {
   color: var(--accent);
   background: var(--accent-soft);
-  border-color: #cfe6d9;
+  border-color: var(--border);
   font-weight: 600;
 }
 
@@ -125,4 +126,35 @@ a {
   border: 1px solid #fecaca;
   padding: 10px 14px;
   border-radius: 10px;
+}
+/* ---------- Плавающий переключатель огласовок ---------- */
+.harakat-toggle {
+  position: fixed;
+  inset-inline-end: 16px;
+  inset-block-end: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+  color: var(--muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.harakat-toggle input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.harakat-toggle:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }

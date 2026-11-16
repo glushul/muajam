@@ -22,10 +22,7 @@ services:
     working_dir: /app
     volumes:
       - .:/app:z
-      # отдельный out/ для контейнера: иначе контейнерный mill держит
-      # out/mill-out-lock и пишет состояние в общий с хостом out/,
-      # из-за чего Metals/BSP на хосте зависает
-      - millout:/app/out
+      - millout:/app/out:z
       - ${HOME}/.cache/coursier:/root/.cache/coursier:z
       - ${HOME}/.cache/mill:/root/.cache/mill:z
       - ${HOME}/.mill:/root/.mill
@@ -51,6 +48,7 @@ services:
           chmod +x /usr/local/bin/mill
           mill=/usr/local/bin/mill
         fi
+        rm -rf /app/out/backend/runBackground.dest
         exec "$$mill" --watch backend.runBackground
     ports:
       - "${HOST_PORT:-80}:${HTTP_PORT:-8080}"

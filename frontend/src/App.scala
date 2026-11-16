@@ -16,6 +16,8 @@ object App {
     Route.onChange(renderRoute)
   }
 
+  def rerender(): Unit = renderRoute(Route.current)
+
   private def renderRoute(page: Route.ClientRoute): Unit = {
     val token = RenderState.next()
 

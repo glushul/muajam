@@ -60,12 +60,12 @@ private def moduleDetail(module: ModuleResponse): TypedTag[dom.html.Div] = {
 
 private def wordCard(word: WordResponse): TypedTag[dom.html.Div] = {
   val pluralBlock: Modifier =
-    word.plural match {
+    HarakatPrefs.pluralOf(word) match {
       case Some(plural) =>
         div(cls := "plural-pair")(
           div(cls := "plural-item")(
             span(cls := "plural-label")("ед. ч."),
-            span(cls := "plural-word")(word.arabic)
+            span(cls := "plural-word")(HarakatPrefs.of(word))
           ),
           span(cls := "plural-arrow")("→"),
           div(cls := "plural-item")(
@@ -79,7 +79,7 @@ private def wordCard(word: WordResponse): TypedTag[dom.html.Div] = {
 
   div(cls := "word-card")(
     div(cls := "word-card-body")(
-      div(cls := "word-arabic")(word.arabic),
+      div(cls := "word-arabic")(HarakatPrefs.of(word)),
       div(cls := "word-translation")(word.translation)
     ),
     pluralBlock
