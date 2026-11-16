@@ -1,0 +1,128 @@
+/* ============================================================
+   Muajam — базовые стили: переменные, сброс, страница, hero
+   ============================================================ */
+
+/* ---------- Переменные ---------- */
+:root {
+  --bg: #f6f4ec;
+  --surface: #fffdf7;
+  --text: #24221a;
+  --muted: #6f6a58;
+  --border: #e3ded0;
+  --accent: #5b6e2f; 
+  --accent-soft: #e8ecd9;
+  --plural: #a4502e; 
+  --plural-soft: #f5e4da;
+  --module: #6a5a8a;
+  --module-soft: #f0eaf7;
+  --danger: #9e2f24;
+  --danger-soft: #f6dfdb;
+  --radius: 14px;
+  --shadow-sm: 0 1px 2px rgba(50, 40, 20, 0.05);
+  --shadow-md: 0 6px 16px rgba(50, 40, 20, 0.09);
+}
+
+/* ---------- Сброс ---------- */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---------- Страница ---------- */
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  padding: 16px 0 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.hero h1 {
+  margin: 0 0 4px;
+  font-size: 1.9rem;
+  letter-spacing: -0.01em;
+}
+
+.hero h1::first-letter {
+  color: var(--accent);
+}
+
+.hero p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.nav {
+  display: flex;
+  gap: 6px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: background 0.12s ease, color 0.12s ease,
+    border-color 0.12s ease;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.nav-link.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: #cfe6d9;
+  font-weight: 600;
+}
+
+.nav-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Утилиты ---------- */
+.muted {
+  color: var(--muted);
+}
+
+.error {
+  color: var(--danger);
+  background: var(--danger-soft);
+  border: 1px solid #fecaca;
+  padding: 10px 14px;
+  border-radius: 10px;
+}

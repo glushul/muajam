@@ -1,0 +1,8 @@
+out/
+target/
+.bsp/
+.bloop/
+.scala-build/
+.metals/
+.vscode/
+.env

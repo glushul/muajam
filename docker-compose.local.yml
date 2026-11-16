@@ -1,0 +1,65 @@
+services:
+  db:
+    container_name: muajam-db
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${DB_NAME:-muajam}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-muajam}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  scala:
+    container_name: muajam-backend
+    restart: unless-stopped
+    init: true
+    image: eclipse-temurin:21
+    working_dir: /app
+    volumes:
+      - .:/app:z
+      # отдельный out/ для контейнера: иначе контейнерный mill держит
+      # out/mill-out-lock и пишет состояние в общий с хостом out/,
+      # из-за чего Metals/BSP на хосте зависает
+      - millout:/app/out
+      - ${HOME}/.cache/coursier:/root/.cache/coursier:z
+      - ${HOME}/.cache/mill:/root/.cache/mill:z
+      - ${HOME}/.mill:/root/.mill
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -eu
+        version="$$(cat .mill-version 2>/dev/null || echo 1.1.7)"
+        native="$$HOME/.cache/mill/download/$${version}-native-linux-amd64"
+        mill=""
+        if [ -x "$$native" ]; then
+          mill="$$native"
+        elif [ -x ./mill ] && command -v cs >/dev/null 2>&1; then
+          mill=./mill
+        else
+          if ! command -v curl >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y --no-install-recommends curl ca-certificates
+          fi
+          curl -fsSL -o /usr/local/bin/mill \
+            https://raw.githubusercontent.com/com-lihaoyi/mill/main/mill
+          chmod +x /usr/local/bin/mill
+          mill=/usr/local/bin/mill
+        fi
+        exec "$$mill" --watch backend.runBackground
+    ports:
+      - "${HOST_PORT:-80}:${HTTP_PORT:-8080}"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  millout:

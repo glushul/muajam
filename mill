@@ -1,0 +1,60 @@
+#!/usr/bin/env sh
+set -eu
+
+ROOT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+MILL_VERSION="$(cat "$ROOT_DIR/.mill-version" 2>/dev/null || echo 1.1.7)"
+
+# Mill 1.1.7 can crash on BSP startup if the active-BSP file points to a dead
+# PID (ProcessHandle.of(...).orElseThrow()). Clean such stale state before
+# starting the BSP server.
+if [ "${1:-}" = "--bsp" ]; then
+  BSP_OUT="$ROOT_DIR/.bsp/out"
+  for ACTIVE_BSP in "$BSP_OUT"/mill-active-bsp-*.json; do
+    [ -f "$ACTIVE_BSP" ] || continue
+    ACTIVE_PID="$(sed -n 's/.*"pid":\([0-9][0-9]*\).*/\1/p' "$ACTIVE_BSP" | head -n 1)"
+    if [ -z "$ACTIVE_PID" ] || ! kill -0 "$ACTIVE_PID" 2>/dev/null; then
+      BSP_ID="${ACTIVE_BSP##*/mill-active-bsp-}"
+      BSP_ID="${BSP_ID%.json}"
+      rm -f "$ACTIVE_BSP" "$BSP_OUT/mill-bsp-$BSP_ID-lock"
+    fi
+  done
+fi
+
+# IDE (Metals/BSP) may run the build with a stripped or modified environment,
+# so do not rely only on $HOME and $PATH here.
+USER_HOME="${HOME:-}"
+if [ -z "$USER_HOME" ] || [ ! -d "$USER_HOME" ]; then
+  USER_HOME="$(getent passwd "$(id -u)" 2>/dev/null | cut -d: -f6 || true)"
+fi
+if [ -z "$USER_HOME" ] || [ ! -d "$USER_HOME" ]; then
+  USER_HOME="/root"
+fi
+
+NATIVE_NAME="${MILL_VERSION}-native-linux-amd64"
+NATIVE_CANDIDATES="
+${XDG_CACHE_HOME:-}/mill/download/$NATIVE_NAME
+$USER_HOME/.cache/mill/download/$NATIVE_NAME
+$USER_HOME/.cache/metals/mill/download/$NATIVE_NAME
+/root/.cache/mill/download/$NATIVE_NAME
+"
+
+for candidate in $NATIVE_CANDIDATES; do
+  if [ -x "$candidate" ]; then
+    exec "$candidate" "$@"
+  fi
+done
+
+CS_CANDIDATES="
+$(command -v cs 2>/dev/null || true)
+$USER_HOME/.local/share/coursier/bin/cs
+/usr/local/bin/cs
+"
+
+for cs_bin in $CS_CANDIDATES; do
+  if [ -x "$cs_bin" ]; then
+    exec "$cs_bin" launch "com.lihaoyi:mill-runner-launcher_3:${MILL_VERSION}" -- "$@"
+  fi
+done
+
+echo "Mill $MILL_VERSION не найден. Установите его через Coursier: cs install mill" >&2
+exit 1

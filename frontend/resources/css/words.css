@@ -1,0 +1,167 @@
+/* ============================================================
+   Muajam — карточки слов
+   ============================================================ */
+
+.word-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .word-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .word-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .word-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ---------- Карточка слова ---------- */
+.word-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.12s ease, box-shadow 0.12s ease,
+    border-color 0.12s ease;
+  height: 100%;
+}
+
+.word-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: #d1d5db;
+}
+
+.word-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  min-height: 22px;
+}
+
+.word-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding-bottom: 8px;
+  flex: 1;
+}
+
+.word-card .word-arabic {
+  font-family: "Amiri", "Scheherazade New", "Noto Naskh Arabic", serif;
+  font-size: 2rem;
+  font-weight: 600;
+  direction: rtl;
+  text-align: center;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.word-card .word-translation {
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+/* ---------- Бейдж части речи ---------- */
+.word-pos {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--module-soft);
+  color: var(--module);
+  white-space: nowrap;
+}
+/* ============================================================
+   Muajam — страница «Словарь»: простой список слов
+   ============================================================ */
+
+.dictionary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.dictionary-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.dictionary-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.dictionary-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 4px 16px;
+  align-items: baseline;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dictionary-item:last-child {
+  border-bottom: none;
+}
+
+.dictionary-arabic-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 4px 14px;
+}
+
+.dictionary-arabic,
+.dictionary-plural {
+  font-family: "Amiri", "Scheherazade New", "Noto Naskh Arabic", serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  direction: rtl;
+  line-height: 1.3;
+}
+
+.dictionary-arabic {
+  color: var(--text);
+}
+
+.dictionary-translation {
+  color: var(--text);
+}
+
+.dictionary-plural {
+  color: var(--plural);
+}
+
+@media (max-width: 480px) {
+  .dictionary-item {
+    grid-template-columns: 1fr;
+  }
+}

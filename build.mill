@@ -1,0 +1,87 @@
+package build
+
+import mill.*, scalalib.*, scalajslib.*
+import scalajslib.api.ModuleKind
+
+val scalaVer = "3.6.2"
+
+// --- Общий модуль ---
+trait SharedModule extends PlatformScalaModule {
+  def scalaVersion = scalaVer
+
+  def mvnDeps = Seq(
+    mvn"dev.zio::zio-json::0.9.1"
+  )
+}
+
+object shared extends Module {
+  object jvm extends SharedModule
+
+  object js extends SharedModule with ScalaJSModule {
+    def scalaJSVersion = "1.22.0"
+  }
+}
+
+// --- Бэкенд на ZIO HTTP ---
+object backend extends ScalaModule {
+  def scalaVersion = scalaVer
+  def moduleDeps = Seq(shared.jvm)
+
+  def mvnDeps = Seq(
+    mvn"dev.zio::zio-http:3.11.2",
+    mvn"dev.zio::zio-json::0.9.1",
+    mvn"org.flywaydb:flyway-core:10.22.0",
+    mvn"org.postgresql:postgresql:42.7.4",
+    mvn"com.lihaoyi::scalasql-zio:0.3.2",
+    mvn"com.zaxxer:HikariCP:7.1.0",
+    mvn"org.slf4j:slf4j-simple:2.0.18"
+  )
+
+  def mainClass = Some("muajam.backend.Main")
+
+  override def scalacOptions = Seq(
+    "-Wunused:imports,locals",
+    "-Werror",
+    "-deprecation"
+  )
+
+  // Фронтенд собирается и кладётся в resources бэкенда,
+  // поэтому одной командой `backend.run` поднимается и API, и страница.
+  override def resources = Task {
+    super.resources() ++ Seq(frontend.dist())
+  }
+}
+
+// --- Фронтенд на Scala.js + scalatags ---
+object frontend extends ScalaJSModule {
+  def scalaVersion = scalaVer
+  def scalaJSVersion = "1.22.0"
+  def moduleDeps = Seq(shared.js)
+
+  def mvnDeps = Seq(
+    mvn"com.lihaoyi::scalatags::0.13.1",
+    mvn"org.scala-js::scalajs-dom::2.8.0"
+  )
+
+  def mainClass = Some("muajam.frontend.Main")
+  def moduleKind = ModuleKind.ESModule
+
+  // Собирает index.html, main.js, style.css и manifest в каталог `public`,
+  // который затем попадает в ресурсы бэкенда.
+  def dist = Task {
+    val linked = fastLinkJS()
+    val publicDir = Task.dest / "public"
+    val sourceDir = resources().head.path
+
+    os.makeDir.all(publicDir)
+    os.copy.over(linked.dest.path / "main.js", publicDir / "main.js")
+    os.copy.over(sourceDir / "index.html", publicDir / "index.html")
+    os.copy.over(sourceDir / "css", publicDir / "css")
+    os.copy.over(
+      sourceDir / "manifest.webmanifest",
+      publicDir / "manifest.webmanifest"
+    )
+
+    PathRef(Task.dest)
+  }
+}

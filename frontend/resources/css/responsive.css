@@ -1,0 +1,42 @@
+/* ============================================================
+   Muajam — мобильная адаптация (подключать последним!)
+   ============================================================ */
+
+@media (max-width: 480px) {
+  .page {
+    padding: 16px 12px 48px;
+  }
+
+  .hero h1 {
+    font-size: 1.6rem;
+  }
+
+  .module-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .word-card .word-arabic {
+    font-size: 1.7rem;
+  }
+
+  .plural-word {
+    font-size: 1.2rem;
+  }
+
+  .markdown {
+    padding: 16px;
+    font-size: 0.95rem;
+  }
+
+  .markdown h1 { font-size: 1.4rem; }
+  .markdown h2 { font-size: 1.2rem; }
+  .markdown h3 { font-size: 1.05rem; }
+
+  .markdown table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}

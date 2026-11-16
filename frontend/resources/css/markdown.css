@@ -1,0 +1,200 @@
+/* ============================================================
+   Muajam — Markdown
+   ============================================================ */
+
+.markdown {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  line-height: 1.65;
+  color: var(--text);
+  overflow-wrap: break-word;
+}
+
+/* ---------- Заголовки ---------- */
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  margin: 1.4em 0 0.6em;
+  line-height: 1.3;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.markdown h1:first-child,
+.markdown h2:first-child,
+.markdown h3:first-child {
+  margin-top: 0;
+}
+
+.markdown h1 {
+  font-size: 1.7rem;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.markdown h2 {
+  font-size: 1.35rem;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.markdown h3 { font-size: 1.15rem; }
+.markdown h4 { font-size: 1.05rem; }
+.markdown h5 { font-size: 1rem; }
+.markdown h6 { font-size: 0.95rem; color: var(--muted); }
+
+/* ---------- Параграфы и текст ---------- */
+.markdown p {
+  margin: 0 0 0.9em;
+}
+
+.markdown strong { font-weight: 600; }
+.markdown em { font-style: italic; }
+
+.markdown a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.markdown a:hover {
+  color: #245a3e;
+}
+
+/* ---------- Списки ---------- */
+.markdown ul,
+.markdown ol {
+  margin: 0 0 1em;
+  padding-left: 1.5em;
+}
+
+.markdown li {
+  margin: 0.25em 0;
+}
+
+.markdown li > ul,
+.markdown li > ol {
+  margin: 0.25em 0 0.25em;
+}
+
+/* маркеры */
+.markdown ul { list-style: disc; }
+.markdown ul ul { list-style: circle; }
+.markdown ul ul ul { list-style: square; }
+.markdown ol { list-style: decimal; }
+
+/* ---------- Цитаты ---------- */
+.markdown blockquote {
+  margin: 0.5em 0;
+  padding: 8px 16px;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  border-radius: 0 8px 8px 0;
+  line-height: 1.8;
+}
+
+.markdown blockquote [lang="ar"] {
+  display: inline-block;
+  font-family: "Amiri", "Scheherazade New", "Noto Naskh Arabic", serif;
+  font-size: 1.15em;
+}
+
+.markdown blockquote [lang="ru"] {
+  margin-left: 8px;
+  color: var(--muted);
+}
+
+/* ---------- Код ---------- */
+.markdown code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  background: var(--bg);
+  padding: 1px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.markdown pre {
+  margin: 0 0 1em;
+  padding: 12px 16px;
+  background: #1f2328;
+  color: #f8f8f2;
+  border-radius: 10px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+
+.markdown pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: 0.9em;
+  color: inherit;
+}
+
+/* ---------- Горизонтальная линия ---------- */
+.markdown hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.5em 0;
+}
+
+/* ---------- Таблицы ---------- */
+.markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 1em;
+  font-size: 0.95rem;
+}
+
+.markdown th,
+.markdown td {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.markdown th {
+  background: var(--bg);
+  font-weight: 600;
+}
+
+.markdown tr:nth-child(even) td {
+  background: #fafafa;
+}
+
+/* ---------- Картинки ---------- */
+.markdown img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+  margin: 0.5em 0;
+}
+
+/* ============================================================
+   RTL для арабских блоков внутри Markdown
+   ============================================================ */
+
+.markdown blockquote[dir="rtl"],
+.markdown blockquote:has(> p:dir(rtl)) {
+  direction: rtl;
+  text-align: right;
+  border-left: none;
+  border-right: 3px solid var(--accent);
+  border-radius: 8px 0 0 8px;
+}
+
+.markdown :lang(ar) {
+  font-family: "Amiri", "Scheherazade New", "Noto Naskh Arabic", serif;
+  direction: rtl;
+  unicode-bidi: isolate;
+  font-size: 1.1em;
+  line-height: 1.8;
+}
