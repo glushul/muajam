@@ -6,7 +6,7 @@ final case class WordResponse(
     id: Int,
     arabic: String,
     withoutHarakat: String,
-    translation: String,
+    russian: String,
     plural: Option[String],
     pluralWithoutHarakat: Option[String],
     moduleId: Int,

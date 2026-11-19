@@ -80,7 +80,7 @@ private def wordCard(word: WordResponse): TypedTag[dom.html.Div] = {
   div(cls := "word-card")(
     div(cls := "word-card-body")(
       div(cls := "word-arabic")(HarakatPrefs.of(word)),
-      div(cls := "word-translation")(word.translation)
+      div(cls := "word-translation")(word.russian)
     ),
     pluralBlock
   )

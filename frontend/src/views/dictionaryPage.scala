@@ -6,10 +6,14 @@ import scalatags.JsDom.all.*
 import muajam.frontend.api.loadWords
 import muajam.frontend.utils.*
 import muajam.shared.WordResponse
-import muajam.shared.stripHarakat
+import muajam.shared.utils.ArabicText
 
 private val russianLetters: Seq[String] =
   "А Б В Г Д Е Ё Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ъ Ы Ь Э Ю Я"
+    .split(' ')
+    .toSeq
+private val arabicLetters: Seq[String] =
+  "ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي"
     .split(' ')
     .toSeq
 
@@ -41,7 +45,8 @@ def dictionaryPage(target: dom.HTMLElement, token: Int): Unit = {
 private def dictionary(words: List[WordResponse]): dom.HTMLElement = {
   final case class Entry(
       element: dom.HTMLLIElement,
-      letter: String,
+      russianLetter: String,
+      arabicLetter: String,
       searchText: String
   )
 
@@ -55,17 +60,19 @@ private def dictionary(words: List[WordResponse]): dom.HTMLElement = {
 
     val element = li(cls := "dictionary-item")(
       span(cls := "dictionary-arabic-group")(arabicGroup),
-      span(cls := "dictionary-translation")(word.translation)
+      span(cls := "dictionary-translation")(word.russian)
     ).render
 
-    val letter =
-      word.translation.trim.headOption.map(_.toUpper.toString).getOrElse("")
-    val text = stripHarakat(
-      (Seq(word.translation, word.arabic, word.withoutHarakat) ++
+    val russianLetter =
+      word.russian.trim.headOption.map(_.toUpper.toString).getOrElse("")
+    val arabicLetter =
+      word.arabic.trim.headOption.map(_.toString).getOrElse("")
+    val text = ArabicText.stripHarakat(
+      (Seq(word.russian, word.arabic, word.withoutHarakat) ++
         word.plural.toSeq ++ word.pluralWithoutHarakat.toSeq).mkString(" ")
     )
 
-    Entry(element, letter, text)
+    Entry(element, russianLetter, arabicLetter, text)
   }
 
   val badge = span(cls := "badge")(s"${entries.length} слов").render
@@ -77,7 +84,18 @@ private def dictionary(words: List[WordResponse]): dom.HTMLElement = {
     value := searchQuery
   ).render
 
-  val letterButtons = russianLetters.map { letter =>
+  val russianLetterButtons = russianLetters.map { letter =>
+    val button =
+      scalatags.JsDom.all
+        .button(
+          `type` := "button",
+          cls := "letter-btn",
+          attr("aria-pressed") := "false"
+        )(letter)
+        .render
+    (letter, button)
+  }
+  val arabicLetterButtons = arabicLetters.map { letter =>
     val button =
       scalatags.JsDom.all
         .button(
@@ -93,11 +111,19 @@ private def dictionary(words: List[WordResponse]): dom.HTMLElement = {
   empty.classList.add("is-hidden")
 
   def applyFilters(): Unit = {
-    val needle = stripHarakat(searchQuery.trim)
+    val needle = ArabicText.stripHarakat(searchQuery.trim)
+
+    val selectedLetterIsRussian =
+      if (russianLetters.contains(selectedLetter.getOrElse(""))) true
+      else false
 
     var visible = 0
     entries.foreach { entry =>
-      val show = selectedLetter.forall(_ == entry.letter) &&
+      val show = selectedLetter.forall(l =>
+        if (selectedLetterIsRussian) l == entry.russianLetter
+        else
+          l == entry.arabicLetter
+      ) &&
         (needle.isEmpty || entry.searchText.contains(needle))
       entry.element.classList.toggle("is-hidden", !show)
       if (show) visible += 1
@@ -108,7 +134,12 @@ private def dictionary(words: List[WordResponse]): dom.HTMLElement = {
       if (selectedLetter.isEmpty && needle.isEmpty) s"${entries.length} слов"
       else s"$visible из ${entries.length}"
 
-    letterButtons.foreach { case (letter, button) =>
+    russianLetterButtons.foreach { case (letter, button) =>
+      val active = selectedLetter.contains(letter)
+      button.classList.toggle("active", active)
+      button.setAttribute("aria-pressed", active.toString)
+    }
+    arabicLetterButtons.foreach { case (letter, button) =>
       val active = selectedLetter.contains(letter)
       button.classList.toggle("active", active)
       button.setAttribute("aria-pressed", active.toString)
@@ -123,15 +154,16 @@ private def dictionary(words: List[WordResponse]): dom.HTMLElement = {
     }
   )
 
-  letterButtons.foreach { case (letter, button) =>
-    button.addEventListener(
-      "click",
-      (_: dom.Event) => {
-        selectedLetter =
-          if (selectedLetter.contains(letter)) None else Some(letter)
-        applyFilters()
-      }
-    )
+  (russianLetterButtons ++ arabicLetterButtons).foreach {
+    case (letter, button) =>
+      button.addEventListener(
+        "click",
+        (_: dom.Event) => {
+          selectedLetter =
+            if (selectedLetter.contains(letter)) None else Some(letter)
+          applyFilters()
+        }
+      )
   }
 
   val root = div(cls := "dictionary")(
@@ -141,7 +173,8 @@ private def dictionary(words: List[WordResponse]): dom.HTMLElement = {
     ),
     div(cls := "dictionary-toolbar")(
       search,
-      div(cls := "letter-buttons")(letterButtons.map(_._2)*)
+      div(cls := "letter-buttons")(russianLetterButtons.map(_._2)*),
+      div(cls := "letter-buttons")(arabicLetterButtons.map(_._2)*)
     ),
     ul(cls := "dictionary-list")(entries.map(_.element)*),
     empty

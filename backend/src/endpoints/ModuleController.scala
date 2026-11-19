@@ -10,8 +10,8 @@ import muajam.backend.db.*
 import scalasql.dialects.PostgresDialect.*
 import muajam.shared.*
 import scalasql.dbzio.DbException
-import muajam.backend.Util.*
-import muajam.backend.Util
+import muajam.backend.http.Responses
+import muajam.backend.http.Util
 
 object ModuleController {
 
@@ -19,14 +19,15 @@ object ModuleController {
     Handler.fromFunctionZIO[Request] { _ =>
       withDb {
         for {
-          moduleRows <- run(Module.select.sortBy(m => m.id).desc)
-          modulesWithWords <- ZIO.foreach(moduleRows) { module =>
+          modules <- run(Module.select.sortBy(m => m.id).desc)
+          modulesWithWords <- ZIO.foreach(modules) { module =>
             run(Word.select.filter(_.moduleId `=` module.id))
               .map(words =>
-                Responses.moduleResponse(module, words, previewOnly = true)
+                Responses.moduleResponse(module, words, limit = Some(5))
               )
           }
-        } yield Response.json(modulesWithWords.toJson)
+          response = Response.json(modulesWithWords.toJson)
+        } yield response
       }
     }
 
@@ -37,8 +38,8 @@ object ModuleController {
     ] { case (id, _) =>
       withDb {
         for {
-          moduleRows <- run(Module.select.filter(_.id `=` id))
-          response <- moduleRows.headOption match {
+          module <- run(Module.select.filter(_.id `=` id))
+          response <- module.headOption match {
             case None =>
               ZIO.succeed(Response.status(Status.NotFound))
             case Some(module) =>
@@ -51,7 +52,7 @@ object ModuleController {
                 .map(words =>
                   Response.json(
                     Responses
-                      .moduleResponse(module, words, previewOnly = false)
+                      .moduleResponse(module, words)
                       .toJson
                   )
                 )

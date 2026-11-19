@@ -8,14 +8,12 @@ import scalasql.dbzio.DbException
 
 object Main extends ZIOAppDefault {
 
-  def errorHandler(cause: Cause[DbException | Throwable | Response]) = {
-    ZIO.logErrorCause(cause)
+  def errorHandler(cause: Cause[Any]): Response =
     cause.failureOption match {
       case Some(_: DbException) =>
         Response.status(Status.InternalServerError)
       case _ => Response.status(Status.NotFound)
     }
-  }
 
   val index: Route[Any, Throwable] = {
     Method.GET / "" ->
@@ -29,7 +27,9 @@ object Main extends ZIOAppDefault {
 
   def routes: Routes[ZDbClient, Response] = {
     (static ++ ModuleController.routes ++ WordController.routes)
-      .handleErrorCause(errorHandler)
+      .handleErrorCauseZIO(cause =>
+        ZIO.logErrorCause(cause).as(errorHandler(cause))
+      )
   }
 
   def run =
