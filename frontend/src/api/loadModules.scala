@@ -4,13 +4,13 @@ import org.scalajs.dom
 import zio.json.*
 import muajam.shared.{ApiRoutes, ModuleResponse}
 
-private var modulesCache: Option[List[ModuleResponse]] = None
+private var moduleListCache: Option[List[ModuleResponse]] = None
 
 def loadModules(
     onLoaded: List[ModuleResponse] => Unit,
     onError: String => Unit
 ): Unit =
-  modulesCache match {
+  moduleListCache match {
     case Some(modules) => onLoaded(modules)
     case None          =>
       dom
@@ -24,7 +24,7 @@ def loadModules(
                 case Left(error) =>
                   onError(s"Ошибка разбора модулей: $error")
                 case Right(modules) =>
-                  modulesCache = Some(modules)
+                  moduleListCache = Some(modules)
                   onLoaded(modules)
               }
             }

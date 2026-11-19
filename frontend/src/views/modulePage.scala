@@ -52,7 +52,13 @@ private def moduleDetail(module: ModuleResponse): TypedTag[dom.html.Div] = {
       div(
         h2(module.name)
       ),
-      span(cls := "badge")(s"${module.wordsCount} слов")
+      div(cls := "module-detail-meta")(
+        span(cls := "badge")(s"${module.wordsCount} слов"),
+        a(
+          href := s"#/modules/${module.id}/edit",
+          cls := "btn btn-ghost btn-sm"
+        )("Редактировать")
+      )
     ),
     wordGrid
   )

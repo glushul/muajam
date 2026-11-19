@@ -8,9 +8,17 @@ object Route {
     val path = hash.stripPrefix("#")
 
     if (path.isEmpty || path == "/") ModulesPage
+    else if (path == "/modules/new" || path == "/modules/new/")
+      NewModulePage
     else if (path.startsWith("/modules/")) {
       val rawId = path.drop("/modules/".length).stripSuffix("/")
-      rawId.toIntOption.fold[ClientRoute](NotFound)(ModulePage.apply)
+      if (rawId.endsWith("/edit")) {
+        rawId
+          .stripSuffix("/edit")
+          .toIntOption
+          .fold[ClientRoute](NotFound)(EditModulePage.apply)
+      } else
+        rawId.toIntOption.fold[ClientRoute](NotFound)(ModulePage.apply)
     } else if (path == "/dictionary" || path == "/dictionary/") DictionaryPage
     else if (path == "/grammar" || path == "/grammar/") GrammarPage
     else NotFound
@@ -37,6 +45,14 @@ object Route {
 
   final case class ModulePage(id: Int) extends ClientRoute {
     val route = s"/modules/$id"
+  }
+
+  case object NewModulePage extends ClientRoute {
+    val route = "/modules/new"
+  }
+
+  final case class EditModulePage(id: Int) extends ClientRoute {
+    val route = s"/modules/$id/edit"
   }
 
   case object DictionaryPage extends ClientRoute {

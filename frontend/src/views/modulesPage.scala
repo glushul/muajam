@@ -17,6 +17,7 @@ def modulesPage(target: dom.HTMLElement, token: Int): Unit = {
     modules => {
       if (RenderState.isCurrent(token)) {
         target.innerHTML = ""
+        target.appendChild(modulesHeader(modules.length).render)
 
         if (modules.isEmpty) {
           target.appendChild(
@@ -39,6 +40,19 @@ def modulesPage(target: dom.HTMLElement, token: Int): Unit = {
   )
 }
 
+private def modulesHeader(count: Int): TypedTag[dom.html.Div] =
+  div(cls := "page-header")(
+    div(cls := "page-header-title")(
+      h2("Модули"),
+      span(cls := "badge")(
+        s"$count ${pluralRu(count, "модуль", "модуля", "модулей")}"
+      )
+    ),
+    a(href := "#/modules/new", cls := "btn btn-primary")(
+      "+ Добавить модуль"
+    )
+  )
+
 private def moduleCard(module: ModuleResponse): TypedTag[dom.html.Div] = {
   val preview: Modifier =
     if (module.words.isEmpty) {
@@ -53,8 +67,8 @@ private def moduleCard(module: ModuleResponse): TypedTag[dom.html.Div] = {
       ul(cls := "word-preview")(items*)
     }
 
-  div(
-    a(href := s"#/modules/${module.id}", cls := "module-card")(
+  div(cls := "module-card")(
+    a(href := s"#/modules/${module.id}", cls := "module-card-main")(
       div(cls := "module-header")(
         h2(module.name),
         span(cls := "badge")(s"${module.wordsCount} слов")

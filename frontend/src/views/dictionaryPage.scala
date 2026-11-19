@@ -60,7 +60,13 @@ private def dictionary(words: List[WordResponse]): dom.HTMLElement = {
 
     val element = li(cls := "dictionary-item")(
       span(cls := "dictionary-arabic-group")(arabicGroup),
-      span(cls := "dictionary-translation")(word.russian)
+      span(cls := "dictionary-translation")(word.russian),
+      a(
+        href := s"#/modules/${word.moduleId}/edit",
+        cls := "dictionary-edit",
+        title := "Редактировать модуль",
+        attr("aria-label") := "Редактировать модуль"
+      )("✎")
     ).render
 
     val russianLetter =

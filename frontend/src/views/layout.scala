@@ -40,8 +40,10 @@ private def harakatToggle(): TypedTag[dom.HTMLLabelElement] =
 
 def renderHeader(page: Route.ClientRoute): TypedTag[dom.HTMLDivElement] = {
   val modulesActive = page match {
-    case Route.ModulesPage | _: Route.ModulePage => true
-    case _                                       => false
+    case Route.ModulesPage | _: Route.ModulePage | Route.NewModulePage |
+        _: Route.EditModulePage =>
+      true
+    case _ => false
   }
 
   div(cls := "hero")(

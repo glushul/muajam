@@ -17,6 +17,16 @@
     gap: 8px;
   }
 
+  .module-editor-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .module-editor-actions .btn {
+    flex: 1 1 100%;
+  }
+
   .word-card .word-arabic {
     font-size: 1.7rem;
   }

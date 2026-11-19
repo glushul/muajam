@@ -29,6 +29,10 @@ object App {
           modulesPage(target, token)
         case ModulePage(id) =>
           modulePage(target, id, token)
+        case NewModulePage =>
+          moduleFormPage(target, None, token)
+        case EditModulePage(id) =>
+          moduleFormPage(target, Some(id), token)
         case DictionaryPage =>
           dictionaryPage(target, token)
         case GrammarPage =>

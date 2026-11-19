@@ -41,6 +41,13 @@
   border-color: #d1d5db;
 }
 
+.module-card-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .module-header {
   display: flex;
   align-items: flex-start;
