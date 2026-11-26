@@ -1,0 +1,42 @@
+/* ============================================================
+   Muajam — страница просмотра модуля
+   ============================================================ */
+
+.module-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.back-link {
+  display: inline-block;
+  color: var(--muted);
+  font-size: 0.9rem;
+  transition: color 0.12s ease;
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
+
+.module-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.module-detail-header h2 {
+  margin: 0 0 4px;
+  font-size: 1.5rem;
+}
+
+.module-detail-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}

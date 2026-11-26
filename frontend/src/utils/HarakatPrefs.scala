@@ -1,7 +1,7 @@
 package muajam.frontend.utils
 
 import org.scalajs.dom
-import muajam.shared.WordResponse
+import muajam.shared.dto.WordResponse
 
 object HarakatPrefs {
   private val StorageKey = "muajam.withoutHarakat"

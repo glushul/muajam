@@ -36,3 +36,6 @@ def pluralRu(
   else if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) few
   else many
 }
+
+def wordsLabel(count: Int): String =
+  s"$count ${pluralRu(count, "слово", "слова", "слов")}"

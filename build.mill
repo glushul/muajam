@@ -75,6 +75,11 @@ object frontend extends ScalaJSModule {
 
     os.makeDir.all(publicDir)
     os.copy.over(linked.dest.path / "main.js", publicDir / "main.js")
+    if (os.exists(linked.dest.path / "main.js.map"))
+      os.copy.over(
+        linked.dest.path / "main.js.map",
+        publicDir / "main.js.map"
+      )
     os.copy.over(sourceDir / "index.html", publicDir / "index.html")
     os.copy.over(sourceDir / "css", publicDir / "css")
     os.copy.over(

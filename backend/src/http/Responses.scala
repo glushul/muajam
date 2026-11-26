@@ -3,7 +3,7 @@ package muajam.backend.http
 import java.time.format.DateTimeFormatter
 import muajam.backend.db.*
 import muajam.shared.utils.ArabicText
-import muajam.shared.*
+import muajam.shared.dto.*
 import scalasql.*
 
 object Responses {

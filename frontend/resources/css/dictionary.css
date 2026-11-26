@@ -1,97 +1,5 @@
 /* ============================================================
-   Muajam — карточки слов
-   ============================================================ */
-
-.word-grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: 1fr;
-}
-
-@media (min-width: 640px) {
-  .word-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .word-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (min-width: 1280px) {
-  .word-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* ---------- Карточка слова ---------- */
-.word-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.12s ease, box-shadow 0.12s ease,
-    border-color 0.12s ease;
-  height: 100%;
-}
-
-.word-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: #d1d5db;
-}
-
-.word-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  min-height: 22px;
-}
-
-.word-card-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding-bottom: 8px;
-  flex: 1;
-}
-
-.word-card .word-arabic {
-  font-family: "Amiri", "Scheherazade New", "Noto Naskh Arabic", serif;
-  font-size: 2rem;
-  font-weight: 600;
-  direction: rtl;
-  text-align: center;
-  line-height: 1.2;
-  color: var(--text);
-}
-
-.word-card .word-translation {
-  font-size: 1.05rem;
-  color: var(--text);
-}
-
-/* ---------- Бейдж части речи ---------- */
-.word-pos {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  background: var(--module-soft);
-  color: var(--module);
-  white-space: nowrap;
-}
-/* ============================================================
-   Muajam — страница «Словарь»: простой список слов
+   Muajam — страница «Словарь»
    ============================================================ */
 
 .dictionary-header {
@@ -207,7 +115,6 @@
   }
 }
 
-/* ---------- Поиск и фильтр по буквам ---------- */
 .dictionary-toolbar {
   position: sticky;
   top: 0;

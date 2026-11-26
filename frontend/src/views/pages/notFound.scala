@@ -1,4 +1,4 @@
-package muajam.frontend.views
+package muajam.frontend.views.pages
 
 import org.scalajs.dom
 import org.scalajs.dom.document

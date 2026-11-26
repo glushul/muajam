@@ -1,11 +1,11 @@
-package muajam.frontend.views
+package muajam.frontend.views.pages
 
 import org.scalajs.dom
 import org.scalajs.dom.document
 import scalatags.JsDom.all.*
-import muajam.frontend.api.loadWords
+import muajam.frontend.api.WordsApi
 import muajam.frontend.utils.*
-import muajam.shared.WordResponse
+import muajam.shared.dto.WordResponse
 import muajam.shared.utils.ArabicText
 
 private val russianLetters: Seq[String] =
@@ -25,7 +25,7 @@ def dictionaryPage(target: dom.HTMLElement, token: Int): Unit = {
   target.innerHTML = ""
   target.appendChild(p(cls := "muted")("Загрузка слов…").render)
 
-  loadWords(
+  WordsApi.loadWords(
     words => {
       if (RenderState.isCurrent(token)) {
         target.innerHTML = ""
@@ -81,7 +81,7 @@ private def dictionary(words: List[WordResponse]): dom.HTMLElement = {
     Entry(element, russianLetter, arabicLetter, text)
   }
 
-  val badge = span(cls := "badge")(s"${entries.length} слов").render
+  val badge = span(cls := "badge")(wordsLabel(entries.length)).render
 
   val search = input(
     `type` := "search",
@@ -120,26 +120,24 @@ private def dictionary(words: List[WordResponse]): dom.HTMLElement = {
     val needle = ArabicText.stripHarakat(searchQuery.trim)
 
     val selectedLetterIsRussian =
-      if (russianLetters.contains(selectedLetter.getOrElse(""))) true
-      else false
+      russianLetters.contains(selectedLetter.getOrElse(""))
 
-    var visible = 0
-    entries.foreach { entry =>
-      val show = selectedLetter.forall(l =>
+    def matches(entry: Entry): Boolean =
+      selectedLetter.forall(l =>
         if (selectedLetterIsRussian) l == entry.russianLetter
-        else
-          l == entry.arabicLetter
+        else l == entry.arabicLetter
       ) &&
         (needle.isEmpty || entry.searchText.contains(needle))
-      entry.element.classList.toggle("is-hidden", !show)
-      if (show) visible += 1
-    }
+
+    val visible = entries.count(matches)
+    entries.foreach(entry =>
+      entry.element.classList.toggle("is-hidden", !matches(entry))
+    )
 
     empty.classList.toggle("is-hidden", visible > 0)
     badge.textContent =
-      if (selectedLetter.isEmpty && needle.isEmpty) s"${entries.length} слов"
+      if (selectedLetter.isEmpty && needle.isEmpty) wordsLabel(entries.length)
       else s"$visible из ${entries.length}"
-
     russianLetterButtons.foreach { case (letter, button) =>
       val active = selectedLetter.contains(letter)
       button.classList.toggle("active", active)

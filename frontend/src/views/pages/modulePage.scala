@@ -1,12 +1,13 @@
-package muajam.frontend.views
+package muajam.frontend.views.pages
 
 import org.scalajs.dom
 import org.scalajs.dom.document
 import scalatags.JsDom.TypedTag
 import scalatags.JsDom.all.*
-import muajam.frontend.api.loadModule
+import muajam.frontend.api.ModulesApi
 import muajam.frontend.utils.*
-import muajam.shared.{ModuleResponse, WordResponse}
+import muajam.frontend.views.components.wordCard
+import muajam.shared.dto.ModuleResponse
 
 def modulePage(
     target: dom.HTMLElement,
@@ -16,7 +17,7 @@ def modulePage(
   target.innerHTML = ""
   target.appendChild(p(cls := "muted")("Загрузка модуля…").render)
 
-  loadModule(
+  ModulesApi.loadModule(
     id,
     module => {
       if (RenderState.isCurrent(token)) {
@@ -53,7 +54,7 @@ private def moduleDetail(module: ModuleResponse): TypedTag[dom.html.Div] = {
         h2(module.name)
       ),
       div(cls := "module-detail-meta")(
-        span(cls := "badge")(s"${module.wordsCount} слов"),
+        span(cls := "badge")(wordsLabel(module.wordsCount)),
         a(
           href := s"#/modules/${module.id}/edit",
           cls := "btn btn-ghost btn-sm"
@@ -61,33 +62,5 @@ private def moduleDetail(module: ModuleResponse): TypedTag[dom.html.Div] = {
       )
     ),
     wordGrid
-  )
-}
-
-private def wordCard(word: WordResponse): TypedTag[dom.html.Div] = {
-  val pluralBlock: Modifier =
-    HarakatPrefs.pluralOf(word) match {
-      case Some(plural) =>
-        div(cls := "plural-pair")(
-          div(cls := "plural-item")(
-            span(cls := "plural-label")("ед. ч."),
-            span(cls := "plural-word")(HarakatPrefs.of(word))
-          ),
-          span(cls := "plural-arrow")("→"),
-          div(cls := "plural-item")(
-            span(cls := "plural-label")("мн. ч."),
-            span(cls := "plural-word plural-word-highlight")(plural)
-          )
-        )
-      case None =>
-        div(cls := "plural-empty")("мн. ч. не указано")
-    }
-
-  div(cls := "word-card")(
-    div(cls := "word-card-body")(
-      div(cls := "word-arabic")(HarakatPrefs.of(word)),
-      div(cls := "word-translation")(word.russian)
-    ),
-    pluralBlock
   )
 }

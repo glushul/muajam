@@ -1,5 +1,5 @@
 /* ============================================================
-   Muajam — модули: сетка, карточка модуля, превью слов
+   Muajam — сетка и карточки модулей
    ============================================================ */
 
 .module-grid {
@@ -20,7 +20,6 @@
   }
 }
 
-/* ---------- Карточка модуля ---------- */
 .module-card {
   display: flex;
   flex-direction: column;
@@ -41,13 +40,6 @@
   border-color: #d1d5db;
 }
 
-.module-card-main {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 10px;
-}
-
 .module-header {
   display: flex;
   align-items: flex-start;
@@ -61,27 +53,6 @@
   line-height: 1.3;
 }
 
-.module-description {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-/* ---------- Бейдж ---------- */
-.badge {
-  display: inline-block;
-  flex-shrink: 0;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  line-height: 1.4;
-  background: var(--accent-soft);
-  color: var(--accent);
-  white-space: nowrap;
-}
-
-/* ---------- Превью слов в карточке модуля ---------- */
 .word-preview {
   list-style: none;
   margin: 4px 0 0;

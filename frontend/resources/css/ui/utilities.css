@@ -1,0 +1,19 @@
+/* ============================================================
+   Muajam — утилитарные классы
+   ============================================================ */
+
+.muted {
+  color: var(--muted);
+}
+
+.error {
+  color: var(--danger);
+  background: var(--danger-soft);
+  border: 1px solid #fecaca;
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
+[hidden] {
+  display: none !important;
+}

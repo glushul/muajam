@@ -1,4 +1,4 @@
-package muajam.shared
+package muajam.shared.dto
 
 import zio.json.*
 

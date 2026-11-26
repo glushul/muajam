@@ -5,6 +5,7 @@ import org.scalajs.dom.document
 import scalatags.JsDom.all.*
 import muajam.frontend.utils.RenderState
 import muajam.frontend.views.*
+import muajam.frontend.views.pages.*
 import scalatags.*
 import muajam.frontend.Route.*
 
