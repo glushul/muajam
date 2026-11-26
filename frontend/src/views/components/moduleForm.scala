@@ -27,7 +27,8 @@ def moduleForm(
     target: dom.HTMLElement,
     module: Option[ModuleResponse],
     onCancel: () => Unit,
-    onSave: (ModuleRequest, String => Unit) => Unit
+    onSave: (ModuleRequest, String => Unit) => Unit,
+    focusWordId: Option[Int] = None
 ): Unit = {
   val backHref = module.fold("#/")(value => s"#/modules/${value.id}")
   val backLabel = if (module.isDefined) "← К модулю" else "← Все модули"
@@ -148,14 +149,15 @@ def moduleForm(
         }
       )
 
-      grid.appendChild(
-        div(cls := "word-card word-card-edit")(
-          formField("Арабское слово")(arabicInput),
-          formField("Перевод")(russianInput),
-          formField("Мн. ч.")(pluralInput),
-          div(cls := "word-card-actions")(deleteButton)
-        ).render
-      )
+      val card = div(cls := "word-card word-card-edit")(
+        formField("Арабское слово")(arabicInput),
+        formField("Перевод")(russianInput),
+        formField("Мн. ч.")(pluralInput),
+        div(cls := "word-card-actions")(deleteButton)
+      ).render
+
+      word.id.foreach(id => card.setAttribute("data-word-id", id.toString))
+      grid.appendChild(card)
     }
 
     val addTile = button(
@@ -234,6 +236,18 @@ def moduleForm(
   }
 
   render()
+
+  focusWordId.foreach { id =>
+    Option(target.querySelector(s".word-card-edit[data-word-id='$id']")).foreach {
+      case card: dom.HTMLElement =>
+        card.scrollIntoView()
+        card.querySelector(".word-input-arabic") match {
+          case input: dom.HTMLInputElement => input.focus()
+          case _                           => ()
+        }
+      case _ => ()
+    }
+  }
 }
 
 private def initialState(module: Option[ModuleResponse]): ModuleFormState =

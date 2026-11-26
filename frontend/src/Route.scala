@@ -11,12 +11,24 @@ object Route {
     else if (path == "/modules/new" || path == "/modules/new/")
       NewModulePage
     else if (path.startsWith("/modules/")) {
-      val rawId = path.drop("/modules/".length).stripSuffix("/")
+      val (modulePath, query) = path.split("\\?", 2) match {
+        case Array(p, q) => (p, Some(q))
+        case _           => (path, None)
+      }
+      val rawId = modulePath.drop("/modules/".length).stripSuffix("/")
       if (rawId.endsWith("/edit")) {
+        val wordId = query
+          .toSeq
+          .flatMap(_.split("&"))
+          .collectFirst {
+            case part if part.startsWith("word=") => part.drop("word=".length)
+          }
+          .flatMap(_.toIntOption)
+
         rawId
           .stripSuffix("/edit")
           .toIntOption
-          .fold[ClientRoute](NotFound)(EditModulePage.apply)
+          .fold[ClientRoute](NotFound)(id => EditModulePage(id, wordId))
       } else
         rawId.toIntOption.fold[ClientRoute](NotFound)(ModulePage.apply)
     } else if (path == "/dictionary" || path == "/dictionary/") DictionaryPage
@@ -51,8 +63,12 @@ object Route {
     val route = "/modules/new"
   }
 
-  final case class EditModulePage(id: Int) extends ClientRoute {
-    val route = s"/modules/$id/edit"
+  final case class EditModulePage(
+      id: Int,
+      wordId: Option[Int] = None
+  ) extends ClientRoute {
+    def route =
+      s"/modules/$id/edit" + wordId.fold("")(wid => s"?word=$wid")
   }
 
   case object DictionaryPage extends ClientRoute {

@@ -62,10 +62,10 @@ private def dictionary(words: List[WordResponse]): dom.HTMLElement = {
       span(cls := "dictionary-arabic-group")(arabicGroup),
       span(cls := "dictionary-translation")(word.russian),
       a(
-        href := s"#/modules/${word.moduleId}/edit",
+        href := s"#/modules/${word.moduleId}/edit?word=${word.id}",
         cls := "dictionary-edit",
-        title := "Редактировать модуль",
-        attr("aria-label") := "Редактировать модуль"
+        title := "Редактировать слово",
+        attr("aria-label") := "Редактировать слово"
       )("✎")
     ).render
 

@@ -11,7 +11,8 @@ import muajam.shared.dto.{ModuleRequest, ModuleResponse}
 def moduleFormPage(
     target: dom.HTMLElement,
     moduleId: Option[Int],
-    token: Int
+    token: Int,
+    focusWordId: Option[Int] = None
 ): Unit = {
   val title =
     if (moduleId.isDefined) "Редактирование модуля" else "Новый модуль"
@@ -24,7 +25,8 @@ def moduleFormPage(
       renderForm(
         target,
         None,
-        onCancel = () => dom.window.location.hash = "#/"
+        onCancel = () => dom.window.location.hash = "#/",
+        focusWordId = focusWordId
       )
     case Some(id) =>
       target.appendChild(p(cls := "muted")("Загрузка модуля…").render)
@@ -39,7 +41,8 @@ def moduleFormPage(
                 renderForm(
                   target,
                   Some(value),
-                  onCancel = () => dom.window.location.hash = s"#/modules/$id"
+                  onCancel = () => dom.window.location.hash = s"#/modules/$id",
+                  focusWordId = focusWordId
                 )
               case None =>
                 notFound(target, "Модуль не найден")
@@ -57,7 +60,8 @@ def moduleFormPage(
 private def renderForm(
     target: dom.HTMLElement,
     module: Option[ModuleResponse],
-    onCancel: () => Unit
+    onCancel: () => Unit,
+    focusWordId: Option[Int]
 ): Unit =
   moduleForm(
     target,
@@ -73,5 +77,6 @@ private def renderForm(
         },
         onError = reportError
       )
-    }
+    },
+    focusWordId = focusWordId
   )
