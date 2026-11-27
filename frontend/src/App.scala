@@ -30,6 +30,8 @@ object App {
           modulesPage(target, token)
         case ModulePage(id) =>
           modulePage(target, id, token)
+        case StudyModulePage(id) =>
+          studyPage(target, id, token)
         case NewModulePage =>
           moduleFormPage(target, None, token)
         case EditModulePage(id, wordId) =>

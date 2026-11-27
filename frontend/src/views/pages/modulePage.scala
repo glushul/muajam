@@ -39,6 +39,14 @@ def modulePage(
 
 private def moduleDetail(module: ModuleResponse): TypedTag[dom.html.Div] = {
 
+  val studyButton: Modifier =
+    if (module.words.isEmpty) frag()
+    else
+      a(
+        href := s"#/modules/${module.id}/study",
+        cls := "btn btn-primary btn-sm"
+      )("Учить")
+
   val wordGrid: Modifier =
     if (module.words.isEmpty) {
       p(cls := "muted")("В модуле пока нет слов.")
@@ -55,6 +63,7 @@ private def moduleDetail(module: ModuleResponse): TypedTag[dom.html.Div] = {
       ),
       div(cls := "module-detail-meta")(
         span(cls := "badge")(wordsLabel(module.wordsCount)),
+        studyButton,
         a(
           href := s"#/modules/${module.id}/edit",
           cls := "btn btn-ghost btn-sm"

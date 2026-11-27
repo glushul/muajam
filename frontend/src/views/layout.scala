@@ -32,7 +32,7 @@ private def harakatToggle(): TypedTag[dom.HTMLLabelElement] =
       onchange := { (event: dom.Event) =>
         val input = event.target.asInstanceOf[dom.HTMLInputElement]
         HarakatPrefs.setWithoutHarakat(input.checked)
-        App.rerender()
+        if (!HarakatPrefs.notifyChanged()) App.rerender()
       }
     ),
     span("Без огласовок")
@@ -41,7 +41,7 @@ private def harakatToggle(): TypedTag[dom.HTMLLabelElement] =
 def renderHeader(page: Route.ClientRoute): TypedTag[dom.HTMLDivElement] = {
   val modulesActive = page match {
     case Route.ModulesPage | _: Route.ModulePage | Route.NewModulePage |
-        _: Route.EditModulePage =>
+        _: Route.EditModulePage | _: Route.StudyModulePage =>
       true
     case _ => false
   }

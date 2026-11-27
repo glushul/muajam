@@ -29,7 +29,12 @@ object Route {
           .stripSuffix("/edit")
           .toIntOption
           .fold[ClientRoute](NotFound)(id => EditModulePage(id, wordId))
-      } else
+      } else if (rawId.endsWith("/study"))
+        rawId
+          .stripSuffix("/study")
+          .toIntOption
+          .fold[ClientRoute](NotFound)(StudyModulePage.apply)
+      else
         rawId.toIntOption.fold[ClientRoute](NotFound)(ModulePage.apply)
     } else if (path == "/dictionary" || path == "/dictionary/") DictionaryPage
     else if (path == "/grammar" || path == "/grammar/") GrammarPage
@@ -57,6 +62,10 @@ object Route {
 
   final case class ModulePage(id: Int) extends ClientRoute {
     val route = s"/modules/$id"
+  }
+
+  final case class StudyModulePage(id: Int) extends ClientRoute {
+    val route = s"/modules/$id/study"
   }
 
   case object NewModulePage extends ClientRoute {

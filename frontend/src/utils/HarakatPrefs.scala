@@ -6,11 +6,19 @@ import muajam.shared.dto.WordResponse
 object HarakatPrefs {
   private val StorageKey = "muajam.withoutHarakat"
 
+  private var changeListener: Option[() => Boolean] = None
+
   def withoutHarakat: Boolean =
     dom.window.localStorage.getItem(StorageKey) == "true"
 
   def setWithoutHarakat(value: Boolean): Unit =
     dom.window.localStorage.setItem(StorageKey, value.toString)
+
+  def setChangeListener(listener: Option[() => Boolean]): Unit =
+    changeListener = listener
+
+  def notifyChanged(): Boolean =
+    changeListener.exists(_.apply())
 
   def of(word: WordResponse): String =
     if (withoutHarakat) word.withoutHarakat else word.arabic
